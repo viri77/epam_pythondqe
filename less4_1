@@ -1,0 +1,41 @@
+import random
+import string
+
+def generate_dicts():
+    num_dicts = random.randint(2, 10)
+    list_of_dicts = []
+
+    for i in range(num_dicts):
+        num_keys = random.randint(1, 10)
+        new_dict = {}
+        for k in range(num_keys):
+            key = random.choice(string.ascii_lowercase)
+            value = random.randint(0, 100)
+            new_dict[key] = value
+        list_of_dicts.append(new_dict)
+
+    return list_of_dicts
+
+def merge_dicts(list_of_dicts):
+    result_dict = {}
+
+    for k, v in list_of_dicts[0].items():
+        result_dict[k] = v
+
+    for i, d in enumerate(list_of_dicts[1:], 2):
+        for k, v in d.items():
+            new_key = f"{k}_{i}"
+            if k in result_dict:
+                if v > result_dict[k]:
+                    result_dict[k] = v
+                    result_dict[new_key] = v
+            else:
+                result_dict[k] = v
+
+    return result_dict
+
+# Generate dictionaries and merge them
+list_of_dicts = generate_dicts()
+result_dict = merge_dicts(list_of_dicts)
+
+print(result_dict)
