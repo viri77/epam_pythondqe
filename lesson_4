@@ -1,0 +1,52 @@
+import re
+
+def normalize_text(text):
+    return text.lower()
+
+def fix_iz(text):
+    return text.replace(' iz ', ' is ')
+
+def count_whitespace(text):
+    symbol_counts = 0
+    for char in text:
+        if char.isspace():
+            symbol_counts += 1
+    return symbol_counts
+
+
+def get_last_words(text):
+    sentences = re.split(r'(?<=[.!?])', text)
+    last_words = [re.findall(r'\b\w+\b', sentence)[-1] for sentence in sentences if sentence.strip()]
+    return last_words
+
+def insert_last_word_sentence(text, last_words):
+    word_after = 'paragraph.'
+    insert_index = text.lower().find('paragraph')
+    sentence_before_insert = text[:insert_index + len(word_after)]
+    sentence_after_insert = text[insert_index + len(word_after):]
+    sent_last_word = ' '.join(last_words)
+    return f"{sentence_before_insert} {sent_last_word}. {sentence_after_insert}"
+
+def refactor_homework(text):
+    normalized_text = normalize_text(text)
+    fixed_iz_text = fix_iz(normalized_text)
+    whitespace_count = count_whitespace(fixed_iz_text)
+    last_words = get_last_words(fixed_iz_text)
+    result = insert_last_word_sentence(fixed_iz_text, last_words)
+    return result, whitespace_count
+
+# Original text
+my_string = '''homEwork:
+	tHis iz your homeWork, copy these Text to variable. 
+
+	You NEED TO normalize it fROM letter CASEs point oF View. also, create one MORE senTENCE witH LAST WoRDS of each existING SENtence and add it to the END OF this Paragraph.
+
+	it iZ misspeLLing here. fix“iZ” with correct “is”, but ONLY when it Iz a mistAKE. 
+
+	last iz TO calculate nuMber OF Whitespace characteRS in this Text. caREFULL, not only Spaces, but ALL whitespaces. I got 87.
+'''
+
+# Refactor the homework
+refactored_text, whitespace_count = refactor_homework(my_string)
+print(refactored_text)
+print(whitespace_count)
