@@ -4,6 +4,14 @@ import random
 b = [random.randint(0,1000) for i in range(100)]
 
 
+#sorting
+for i in range(len(b)):
+    for j in range(1, len(b) - i):
+        if b[j] < b[j - 1]:  #
+            b[j], b[j - 1] = b[j - 1], b[j]
+
+print(b)
+
 
 # create empty lists for even and odd numbers
 list_even = []
