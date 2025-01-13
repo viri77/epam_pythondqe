@@ -1,10 +1,8 @@
 import re
 
 def normalize_text(text):
-    return text.lower()
+    return text.lower().replace(' iz ', ' is ')
 
-def fix_iz(text):
-    return text.replace(' iz ', ' is ')
 
 def count_whitespace(text):
     symbol_counts = 0
@@ -14,25 +12,20 @@ def count_whitespace(text):
     return symbol_counts
 
 
-def get_last_words(text):
-    sentences = re.split(r'(?<=[.!?])', text)
+def last_words_sentence(normalize_text):
+    sentences = re.split(r'(?<=[.!?])', normalize_text)
     last_words = [re.findall(r'\b\w+\b', sentence)[-1] for sentence in sentences if sentence.strip()]
-    return last_words
-
-def insert_last_word_sentence(text, last_words):
     word_after = 'paragraph.'
-    insert_index = text.lower().find('paragraph')
-    sentence_before_insert = text[:insert_index + len(word_after)]
-    sentence_after_insert = text[insert_index + len(word_after):]
+    insert_index = normalize_text.find('paragraph')
+    sentence_before_insert = normalize_text[:insert_index + len(word_after)]
+    sentence_after_insert = normalize_text[insert_index + len(word_after):]
     sent_last_word = ' '.join(last_words)
     return f"{sentence_before_insert} {sent_last_word}. {sentence_after_insert}"
 
 def refactor_homework(text):
     normalized_text = normalize_text(text)
-    fixed_iz_text = fix_iz(normalized_text)
-    whitespace_count = count_whitespace(fixed_iz_text)
-    last_words = get_last_words(fixed_iz_text)
-    result = insert_last_word_sentence(fixed_iz_text, last_words)
+    whitespace_count = count_whitespace(normalized_text)
+    result = last_words_sentence(normalized_text)
     return result, whitespace_count
 
 # Original text
