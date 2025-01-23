@@ -16,14 +16,6 @@ my_string2 = my_string1.replace(' iz ',' is ')#replace  standalone iz
 
 
 
-#calculate whitespaces
-symbol_counts = 0
-for i in my_string2:
-    if i.isspace():
-        symbol_counts += 1
-# print(symbol_counts)
-
-
 sentences = re.split(r'(?<=[.!?])', my_string2)
 
 # last word of every sentences
