@@ -1,0 +1,105 @@
+import datetime
+import os
+from l3 import normalize_text  #homework with function normalize text
+
+
+class Record:
+    def __init__(self, text, city):
+        self.text = normalize_text(text)
+        self.city = normalize_text(city)
+        self.date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    def publish(self, file_name):
+        pass
+
+
+class News(Record):
+    def publish(self, file_name):
+        with open(file_name, 'a') as file:
+            file.write(f"News: {self.text}, City: {self.city}, Date: {self.date}\n")
+
+
+class Adv(Record):
+    def __init__(self, text, expiration_date):
+        super().__init__(text, city="")
+        self.expiration_date = expiration_date
+
+    def days_left(self):
+        today = datetime.datetime.now().date()
+        return (self.expiration_date - today).days
+
+    def publish(self, file_name):
+        with open(file_name, 'a') as file:
+            file.write(f"Private Ad: {self.text}, Expiration Date: {self.expiration_date}, Days Left: {self.days_left()}\n")
+
+
+class Unique(Record):
+    def __init__(self, text, custom_info):
+        super().__init__(text, city="")
+        self.custom_info = normalize_text(custom_info)  # Нормализация custom_info
+
+    def publish(self, file_name):
+        with open(file_name, 'a') as file:
+            file.write(f"Custom: {self.text}, Custom Info: {self.custom_info}\n")
+
+
+class FileProcessor:
+    def __init__(self, file_path="test_file.txt", output_file="news_feed.txt"):
+        self.file_path = file_path
+        self.output_file = output_file
+
+    def process_input_multiple_lines(self, lines):
+        if len(lines) == 3:
+            record_type = normalize_text(lines[0].strip())  # Используем normalize_text
+            text = normalize_text(" ".join(lines[1:-1]).strip())
+            third_part = normalize_text(lines[-1].strip())
+
+            if record_type == 'news':
+                city = third_part
+                news_item = News(text, city)
+                news_item.publish(self.output_file)
+            elif record_type == 'adv':
+                expiration_date = datetime.datetime.strptime(third_part, "%Y-%m-%d").date()
+                ad_item = Adv(text, expiration_date)
+                ad_item.publish(self.output_file)
+            elif record_type == 'unique':
+                unique_item = Unique(text, third_part)
+                unique_item.publish(self.output_file)
+            else:
+                print(f"Unknown record type: {record_type}")
+        else:
+            print("Invalid input format. Please enter data correctly.")
+
+    def process_file(self):
+        try:
+            with open(self.file_path, 'r') as file:
+                lines = []
+                for line in file:
+                    line = line.strip()
+                    if not line:
+                        continue
+
+                    lines.append(line)
+                    if len(lines) == 3:
+                        self.process_input_multiple_lines(lines)
+                        lines = []
+
+                if len(lines) > 0:
+                    print("Invalid input format. Please enter data correctly.")
+
+            os.remove(self.file_path)  # Удаляем файл после успешной обработки
+            print(f"Records have been saved to {self.output_file}")
+        except FileNotFoundError:
+            print(f"Error: The file '{self.file_path}' was not found.")
+        except Exception as e:
+            print(f"Error: {str(e)}")
+
+
+def main():
+    input_file = input("Enter the path to your input file (or press Enter to use default 'test_file.txt'): ") or "test_file.txt"
+    processor = FileProcessor(file_path=input_file)
+    processor.process_file()
+
+
+if __name__ == "__main__":
+    main()
