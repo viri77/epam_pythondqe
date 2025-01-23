@@ -40,4 +40,13 @@ insert_index = my_string2.lower().find('paragraph')
 sent_last_word = ' '.join(last_words)  #ready sentence
 sentence_before_insert = my_string2[:insert_index+len(word_after)]#where to insert new sentence
 sentence_after_insert = my_string2[insert_index+len(word_after):]#where continue the rest of the text after inserting new sentence
-print(f"{sentence_before_insert}  {sent_last_word}. {sentence_after_insert}")
+new_sentence = sentence_before_insert + sent_last_word +"." + sentence_after_insert
+
+#calculate whitespaces
+symbol_counts = 0
+for i in new_sentence:
+    if i.isspace():
+        symbol_counts += 1
+
+print(new_sentence)
+print (f" whitespaces count with new sentence is {symbol_counts}")
